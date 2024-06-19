@@ -8,7 +8,7 @@ pipeline {
                     steps { 
                         sh ''' 
                         docker run -d -p 80:80 --name my-apache-php-app -v /home/kali/Desktop/jenkins-php-selenium-test/src:/var/www/html php:7.2-apache 
-                        sleep 1 
+                        sleep 20 
                         echo 'Now...' 
                         echo 'Visit http://localhost to see your PHP application in action.' 
                         ''' 
