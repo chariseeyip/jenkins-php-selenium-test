@@ -1,5 +1,9 @@
 pipeline { 
     agent none 
+    environment {
+        WORKSPACE_DIR = "${env.WORKSPACE}"
+        DOCKER_WORKSPACE_DIR = "${env.WORKSPACE}".replace('C:', '/c').replace('\\', '/')
+    }
     stages { 
         stage('Integration UI Test') { 
             parallel { 
@@ -10,7 +14,7 @@ pipeline {
                         if [ $(docker ps -a -q -f name=my-apache-php-app) ]; then 
                             docker rm -f my-apache-php-app 
                         fi
-                        docker run -d -p 80:80 --name my-apache-php-app -v /c/Users/chari/Desktop/SIT/YEAR_2/TRI_3/ICT2216_SECURE_SOFTWARE_DEVELOPMENT/TEST/jenkins-php-selenium-test/src:/var/www/html php:7.2-apache 
+                        docker run -d -p 80:80 --name my-apache-php-app -v ${DOCKER_WORKSPACE_DIR}/src:/var/www/html php:7.2-apache 
                         sleep 20 
                         echo 'Now...' 
                         echo 'Visit http://localhost to see your PHP application in action.' 
@@ -28,14 +32,12 @@ pipeline {
                         sh ''' 
                         docker pull maven:3-alpine
                         echo "Current directory: $(pwd)"
-                        echo "Listing contents of $(pwd):"
-                        ls -l $(pwd)
-                        echo "Listing contents of /var/jenkins_home/workspace/Lab-07b@2:"
-                        ls -l /var/jenkins_home/workspace/Lab-07b@2
+                        echo "Listing contents of ${WORKSPACE_DIR}:"
+                        ls -l ${WORKSPACE_DIR}
                         echo "Attempting to run Maven build inside Docker container"
-                        docker run --rm -v /root/.m2:/root/.m2 -v /var/jenkins_home/workspace/Lab-07b@2:/workspace -w /workspace maven:3-alpine ls -l /workspace
-                        docker run --rm -v /root/.m2:/root/.m2 -v /var/jenkins_home/workspace/Lab-07b@2:/workspace -w /workspace maven:3-alpine cat /workspace/pom.xml || echo "POM file not found"
-                        docker run --rm -v /root/.m2:/root/.m2 -v /var/jenkins_home/workspace/Lab-07b@2:/workspace -w /workspace maven:3-alpine mvn -B -DskipTests clean package || echo "Maven build failed"
+                        docker run --rm -v /root/.m2:/root/.m2 -v ${DOCKER_WORKSPACE_DIR}:/workspace -w /workspace maven:3-alpine ls -l /workspace
+                        docker run --rm -v /root/.m2:/root/.m2 -v ${DOCKER_WORKSPACE_DIR}:/workspace -w /workspace maven:3-alpine cat /workspace/pom.xml || echo "POM file not found"
+                        docker run --rm -v /root/.m2:/root/.m2 -v ${DOCKER_WORKSPACE_DIR}:/workspace -w /workspace maven:3-alpine mvn -B -DskipTests clean package || echo "Maven build failed"
                         ''' 
                     } 
                     post { 
