@@ -2,7 +2,7 @@ pipeline {
     agent none 
     environment {
         WORKSPACE_DIR = "${env.WORKSPACE}"
-        DOCKER_WORKSPACE_DIR = "${env.WORKSPACE}".replace('C:', '/c').replace('\\', '/')
+        DOCKER_WORKSPACE_DIR = "${WORKSPACE_DIR.replace('C:', '/c').replace('\\', '/')}"
     }
     stages { 
         stage('Integration UI Test') { 
@@ -31,7 +31,8 @@ pipeline {
                     steps { 
                         sh ''' 
                         docker pull maven:3-alpine
-                        echo "Current directory: $(pwd)"
+                        echo "Current directory: ${WORKSPACE_DIR}"
+                        echo "Docker workspace directory: ${DOCKER_WORKSPACE_DIR}"
                         echo "Listing contents of ${WORKSPACE_DIR}:"
                         ls -l ${WORKSPACE_DIR}
                         echo "Attempting to run Maven build inside Docker container"
