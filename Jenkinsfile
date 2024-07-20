@@ -30,10 +30,12 @@ pipeline {
                         echo "Current directory: $(pwd)"
                         echo "Listing contents of $(pwd):"
                         ls -l $(pwd)
-                        docker run --rm -v /root/.m2:/root/.m2 -v $(pwd):/workspace -w /workspace maven:3-alpine ls -l /workspace
-                        docker run --rm -v /root/.m2:/root/.m2 -v $(pwd):/workspace -w /workspace maven:3-alpine cat /workspace/pom.xml
-                        docker run --rm -v /root/.m2:/root/.m2 -v $(pwd):/workspace -w /workspace maven:3-alpine mvn -B -DskipTests clean package 
-                        docker run --rm -v /root/.m2:/root/.m2 -v $(pwd):/workspace -w /workspace maven:3-alpine mvn test 
+                        echo "Listing contents of /var/jenkins_home/workspace/Lab-07b@2:"
+                        ls -l /var/jenkins_home/workspace/Lab-07b@2
+                        docker run --rm -v /root/.m2:/root/.m2 -v /var/jenkins_home/workspace/Lab-07b@2:/workspace -w /workspace maven:3-alpine ls -l /workspace
+                        docker run --rm -v /root/.m2:/root/.m2 -v /var/jenkins_home/workspace/Lab-07b@2:/workspace -w /workspace maven:3-alpine cat /workspace/pom.xml
+                        docker run --rm -v /root/.m2:/root/.m2 -v /var/jenkins_home/workspace/Lab-07b@2:/workspace -w /workspace maven:3-alpine mvn -B -DskipTests clean package 
+                        docker run --rm -v /root/.m2:/root/.m2 -v /var/jenkins_home/workspace/Lab-07b@2:/workspace -w /workspace maven:3-alpine mvn test 
                         ''' 
                     } 
                     post { 
